@@ -5,6 +5,22 @@ declare(strict_types=1);
 use Paya\Core\Request;
 use Paya\Core\Response;
 
+// Built-in PHP server must serve the UI's static files directly.
+if (PHP_SAPI === 'cli-server') {
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $candidate = realpath(__DIR__ . $path);
+    if ($candidate !== false && str_starts_with($candidate, __DIR__ . DIRECTORY_SEPARATOR)
+        && (is_file($candidate) || is_dir($candidate))) {
+        return false;
+    }
+}
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/') === '/') {
+    header('Location: /app/', true, 302);
+    return;
+}
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: same-origin');
+header('Cache-Control: no-store');
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
