@@ -14,6 +14,10 @@ if (PHP_SAPI === 'cli-server') {
         return false;
     }
 }
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET' && (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/') === '/') {
+    header('Location: /app/', true, 302);
+    return;
+}
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 header('Cache-Control: no-store');
