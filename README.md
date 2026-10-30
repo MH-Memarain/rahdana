@@ -1,53 +1,40 @@
-# Rahdana — API Backend
+# Rahdana — راهدانا
 
-**راهدانا** یک پلتفرم یادگیری و برنامه‌ریزی آموزشی است که Backend آن بر پایهٔ **PayaCore** (PHP + MVC + REST API) آغاز شده است.
+راهدانا، برنامه‌ریز شخصی روزانه با هدف مدیریت تسک‌ها، برنامه زمانی، گزارش فعالیت و حافظه قابل انتقال به مدل‌های AI.
+این پروژه از **PayaCore** با معماری PHP 8.3+، MVC و JSON REST API آغاز شده است؛ فایل‌های `src/Core` دست‌نخورده باقی مانده‌اند.
 
-> وضعیت فعلی: هسته و نام‌گذاری اولیه آماده است؛ هیچ ماژول اختصاصی آموزشی یا اشتراک هنوز پیاده‌سازی نشده است.
+## MVP 0.1 — قابلیت‌های پیاده‌شده
 
-## فناوری
+- ثبت‌نام کنترل‌شده (پیش‌فرض غیرفعال)، ورود و خروج با توکن قابل ابطال
+- ثبت، مشاهده، ویرایش و حذف تسک با زمان تخمینی و تاریخ برنامه
+- گزارش روزانه (انرژی، ساعات آزاد، وضعیت انجام و یادداشت)
+- آمار تسک‌ها و خروجی شخصی JSON برای استفاده آفلاین/در مدل دلخواه
+- رابط اولیه فارسی، RTL و واکنش‌گرا در `/app/`
 
-- PHP 8.3+ و Composer (PSR-4)
-- MVC سبک با JSON REST API
-- چهار کلاس Core با Namespace `Paya\Core`
-- Controllerهای محصول با Namespace `Rahdana\Controllers`
-- PDO برای لایه دیتابیس
+**هنوز پیاده‌سازی نشده:** پروژه‌های بلندمدت، تقویم پیشرفته، مطالعه زمان‌سنج، تدریس، AI، اعلان‌ها. این نسخه یک گام توسعه‌ای است، نه محصول آماده انتشار عمومی.
 
-## اجرای محلی
+## راه‌اندازی محلی
+
+پیش‌نیاز: PHP 8.3+ با `pdo_mysql` و `mbstring`، MySQL/MariaDB و Composer.
 
 ```bash
 git clone git@github.com:MH-Memarain/rahdana.git
 cd rahdana
 composer install
-composer test
+# DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD را در محیط تنظیم کن
+php bin/migrate.php
 php -S 127.0.0.1:8000 -t public public/index.php
-curl -i http://127.0.0.1:8000/api/v1/health
 ```
 
-مسیر موجود: `GET /api/v1/health` (بدون نیاز به اتصال دیتابیس). برای کار با MySQL افزونهٔ `pdo_mysql` لازم است.
+آدرس رابط: `http://127.0.0.1:8000/app/`.
 
-## ساختار
+قبل از اولین ورود، در محیط **محلی** با `ALLOW_REGISTRATION=true` از `POST /api/v1/auth/register` کاربر بساز و سپس ثبت‌نام را غیرفعال کن. راهنمای فرمان‌ها در [docs/API.md](docs/API.md) است.
 
-```text
-public/                   نقطه ورود عمومی و Apache Rewrite
-bootstrap/                راه‌اندازی Router
-config/                   تنظیمات برنامه و Database
-routes/api.php            مسیرهای API
-src/Core/                 Router, Request, Response, Database
-src/Controllers/          کنترلرهای مخصوص راهدانا
-src/Models/               مدل‌های مخصوص راهدانا
-src/Views/                رزرو برای استفاده‌های بعدی
-src/Middleware/           Middlewareهای پروژه
-database/migrations/      Migrationهای دیتابیس
-storage/logs/             فایل‌های خصوصی و لاگ
-tests/                    تست‌ها
-docs/                     مستندات
-```
+**مهم:** فقط `public/` باید از طریق وب قابل دسترسی باشد. `.env.example` بارگذاری خودکار ندارد؛ تنظیمات باید از سیستم/وب‌سرور خوانده شوند. توکن‌ها در رابط آزمایشی داخل sessionStorage نگهداری می‌شوند؛ برای استقرار عمومی باید کنترل‌های امنیتی بیشتر و شیوه امن‌تر مدیریت نشست پیاده‌سازی شود.
 
-## نکات مهم
+## مستندات
 
-- فقط `public/` باید Document Root وب‌سرور باشد.
-- `.env.example` صرفاً نمونه است و بارگذاری خودکار فایل `.env` وجود ندارد؛ متغیرهای محیطی باید در محیط اجرا تنظیم شوند.
-- احراز هویت، مجوزها، CORS و محدودسازی نرخ درخواست هنوز پیاده‌سازی نشده‌اند.
-- اطلاعات منشأ کپی و Baseline در [docs/ORIGIN.md](docs/ORIGIN.md) و قراردادها در [docs/architecture.md](docs/architecture.md) آمده است.
-
-**توجه:** در زمان ثبت این نسخه، مخزن در GitHub عمومی (Public) بود. در صورت نیاز به مخزن خصوصی، Visibility را از تنظیمات GitHub تغییر بده.
+- [طرح MVP و مدل داده](docs/MVP.md)
+- [API و مثال‌ها](docs/API.md)
+- [منشأ نسخه PayaCore](docs/ORIGIN.md)
+- [قرارداد معماری](docs/architecture.md)
